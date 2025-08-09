@@ -1,0 +1,154 @@
+{
+	"name": "draft-manager",
+	"displayName": "Draft Manager",
+	"description": "Manage and track MDX blog drafts with smart status indicators",
+	"version": "0.1.0",
+	"engines": {
+		"vscode": "^1.74.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "postManager",
+					"title": "Post Manager",
+					"icon": "$(notebook)"
+				}
+			]
+		},
+		"views": {
+			"explorer": [
+				{
+					"id": "draftManager",
+					"name": "Drafts"
+				}
+			],
+			"postManager": [
+				{
+					"id": "postFilters",
+					"name": "All Posts",
+					"type": "webview"
+				},
+				{
+					"id": "postStatistics",
+					"name": "Statistics"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "draftManager.refresh",
+				"title": "Refresh",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "draftManager.openDraft",
+				"title": "Open Draft"
+			},
+			{
+				"command": "draftManager.promoteDraft",
+				"title": "Promote to Published"
+			},
+			{
+				"command": "draftManager.showInExplorer",
+				"title": "Show in Explorer"
+			},
+			{
+				"command": "postManager.refresh",
+				"title": "Refresh Posts",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "postManager.openPost",
+				"title": "Open Post"
+			},
+			{
+				"command": "postManager.search",
+				"title": "Search Posts",
+				"icon": "$(search)"
+			},
+			{
+				"command": "postManager.filterByStatus",
+				"title": "Filter by Status",
+				"icon": "$(filter)"
+			},
+			{
+				"command": "postManager.filterByType",
+				"title": "Filter by Type",
+				"icon": "$(tag)"
+			},
+			{
+				"command": "postManager.clearFilters",
+				"title": "Clear Filters",
+				"icon": "$(clear-all)"
+			},
+			{
+				"command": "postManager.removeFilter",
+				"title": "Remove Filter"
+			},
+			{
+				"command": "postManager.quickFilter",
+				"title": "Quick Filter"
+			},
+			{
+				"command": "postManager.showStatistics",
+				"title": "Show Detailed Statistics",
+				"icon": "$(graph)"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "draftManager.refresh",
+					"when": "view == draftManager",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "draftManager.openDraft",
+					"when": "view == draftManager && viewItem == draft",
+					"group": "1_open"
+				},
+				{
+					"command": "draftManager.promoteDraft",
+					"when": "view == draftManager && viewItem == draft",
+					"group": "2_manage"
+				},
+				{
+					"command": "draftManager.showInExplorer",
+					"when": "view == draftManager && viewItem == draft",
+					"group": "2_manage"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/node": "16.x",
+		"@types/vscode": "^1.74.0",
+		"@typescript-eslint/eslint-plugin": "^8.39.0",
+		"@typescript-eslint/parser": "^8.39.0",
+		"@vscode/test-electron": "^2.3.4",
+		"eslint": "^9.32.0",
+		"typescript": "^4.9.4"
+	},
+	"dependencies": {
+		"date-fns": "^2.30.0",
+		"gray-matter": "^4.0.3"
+	}
+}
