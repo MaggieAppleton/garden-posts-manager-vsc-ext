@@ -1,6 +1,6 @@
 # Garden Posts Manager – VS Code Extension
 
-A VS Code extension designed for managing blog posts written in MDX and keeping track of drafts.
+A VS Code extension designed for managing digital garden posts written in MDX and keeping track of drafts.
 
 ## ✨ Features
 
