@@ -90,10 +90,6 @@
 				"icon": "$(clear-all)"
 			},
 			{
-				"command": "postManager.removeFilter",
-				"title": "Remove Filter"
-			},
-			{
 				"command": "postManager.showStatistics",
 				"title": "Show Detailed Statistics",
 				"icon": "$(graph)"

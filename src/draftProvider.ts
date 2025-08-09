@@ -44,7 +44,6 @@ export class DraftProvider implements vscode.TreeDataProvider<DraftTreeItem | Lo
 			this._onDidChangeTreeData.fire(); // Show loading state
 			
 			this.drafts = await findDraftFiles();
-			console.log(`Found ${this.drafts.length} draft files:`, this.drafts.map(d => d.path));
 			
 			this.isLoading = false;
 			this._onDidChangeTreeData.fire(); // Show actual results

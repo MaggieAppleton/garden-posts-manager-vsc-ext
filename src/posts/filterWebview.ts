@@ -52,11 +52,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 						this._onFiltersChanged(this._filters);
 						this._updateWebview();
 						break;
-					case 'removeFilter':
-						delete this._filters[message.filterType];
-						this._onFiltersChanged(this._filters);
-						this._updateWebview();
-						break;
 					case 'openPost':
 						// Open the post file
 						const postPath = message.path;

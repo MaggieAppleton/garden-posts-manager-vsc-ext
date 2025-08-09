@@ -193,26 +193,7 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Filt
 		this.applyFilters();
 		this._onDidChangeTreeData.fire(undefined);
 	}
-
-	/**
-	 * Remove a specific filter
-	 */
-	removeFilter(filterType: string): void {
-		switch (filterType.toLowerCase()) {
-			case 'search':
-				this.currentFilters.query = undefined;
-				break;
-			case 'status':
-				this.currentFilters.status = undefined;
-				break;
-			case 'type':
-				this.currentFilters.type = undefined;
-				break;
-		}
-		this.applyFilters();
-		this._onDidChangeTreeData.fire(undefined);
-	}
-
+	
 	/**
 	 * Clear all filters
 	 */
