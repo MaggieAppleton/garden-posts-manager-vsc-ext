@@ -9,17 +9,11 @@ import { openPost, showPostInExplorer, copyPostPath } from "./posts/postCommands
 import { Post } from "./shared/types";
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log("🚀 POST MANAGER EXTENSION ACTIVATING...");
-	
 	try {
-		console.log("Post Manager extension is now active");
-
 		// Create the original draft provider (keep existing functionality)
-		console.log("Creating draft provider...");
 		const draftProvider = new DraftProvider(context.extensionPath);
 
 	// Create new post management providers
-	console.log("Creating post management providers...");
 	const postProvider = new PostProvider(context.extensionPath);
 	const statisticsProvider = new StatisticsProvider();
 	
@@ -50,8 +44,6 @@ export function activate(context: vscode.ExtensionContext) {
 		filterProvider,
 		{ webviewOptions: { retainContextWhenHidden: true } }
 	);
-
-	console.log("Tree views created");
 
 	// Link providers together - when posts are loaded, update statistics and filter webview
 	postProvider.onDidChangeTreeData(() => {
@@ -318,14 +310,6 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	);
 
-	const removeFilterCommand = vscode.commands.registerCommand(
-		"postManager.removeFilter",
-		(filterType: string) => {
-			postProvider.removeFilter(filterType);
-		}
-	);
-
-
 
 	const showStatisticsCommand = vscode.commands.registerCommand(
 		"postManager.showStatistics",
@@ -357,13 +341,11 @@ export function activate(context: vscode.ExtensionContext) {
 		filterByStatusCommand,
 		filterByTypeCommand,
 		clearFiltersCommand,
-		removeFilterCommand,
 		showStatisticsCommand
 	);
 	
-	console.log("✅ POST MANAGER EXTENSION ACTIVATED SUCCESSFULLY!");
 	} catch (error) {
-		console.error("❌ POST MANAGER EXTENSION ACTIVATION FAILED:", error);
+		console.error("Extension activation failed:", error);
 		vscode.window.showErrorMessage(`Post Manager extension failed to activate: ${error}`);
 	}
 }

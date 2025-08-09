@@ -85,23 +85,6 @@ export class FilterItem extends vscode.TreeItem {
 	}
 }
 
-export class ActiveFilterItem extends vscode.TreeItem {
-	constructor(
-		public readonly filterType: string,
-		public readonly filterValue: string
-	) {
-		super(`${filterType}: ${filterValue}`, vscode.TreeItemCollapsibleState.None);
-		
-		this.contextValue = 'activeFilter';
-		this.iconPath = new vscode.ThemeIcon('close', new vscode.ThemeColor('charts.red'));
-		this.tooltip = `Click to remove ${filterType} filter`;
-		this.command = {
-			command: 'postManager.removeFilter',
-			title: 'Remove Filter',
-			arguments: [filterType]
-		};
-	}
-}
 
 export class SeparatorItem extends vscode.TreeItem {
 	constructor(label: string = "─────────────────") {

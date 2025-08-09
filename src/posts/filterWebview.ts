@@ -70,7 +70,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 	}
 
 	public updatePosts(posts: Post[], filteredPosts: Post[], filters: any) {
-		console.log(`FILTER WEBVIEW: updatePosts called with ${posts.length} total posts, ${filteredPosts.length} filtered posts`);
 		this._posts = posts;
 		this._filteredPosts = filteredPosts;
 		this._filters = filters;
@@ -79,7 +78,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 
 	private _updateWebview() {
 		if (this._view) {
-			console.log(`FILTER WEBVIEW: Sending message to webview with ${this._filteredPosts.length} filtered posts`);
 			this._view.webview.postMessage({
 				type: 'updateData',
 				posts: this._posts,
@@ -87,8 +85,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 				filters: this._filters,
 				availableTypes: [...new Set(this._posts.map(p => p.type))].sort()
 			});
-		} else {
-			console.log(`FILTER WEBVIEW: No webview available to update`);
 		}
 	}
 
@@ -131,11 +127,8 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 							</select>
 						</div>
 						
-						<!-- Active Filters (compact chips) -->
-						<div id="activeFilters" class="active-filters-compact" style="display: none;">
-							<div id="filterChips" class="filter-chips-inline"></div>
-							<button id="clearAllFilters" class="clear-all-compact">Clear All</button>
-						</div>
+						   <!-- Clear All Filters Button -->
+						   <button id="clearAllFilters" class="clear-all-compact" style="display: none; margin-top: 8px;">Clear All Filters</button>
 					</div>
 
 					<!-- Results Section -->
@@ -158,6 +151,8 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 					// Search input handling
 					const searchInput = document.getElementById('searchInput');
 					const clearSearch = document.getElementById('clearSearch');
+					const clearAllFiltersBtn = document.getElementById('clearAllFilters');
+					const postsList = document.getElementById('postsList');
 					
 					searchInput.addEventListener('input', debounce((e) => {
 						const value = e.target.value.trim();
@@ -216,8 +211,9 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 							typeSelect.appendChild(option);
 						});
 
-						// Update active filters
-						updateActiveFilters();
+						   // Show/hide clear all filters button
+						   const hasFilters = !!(currentFilters.query || currentFilters.status || currentFilters.type);
+						   clearAllFiltersBtn.style.display = hasFilters ? 'block' : 'none';
 
 						// Update results count
 						document.getElementById('resultCount').textContent = filteredPosts.length;
@@ -229,41 +225,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 						updatePostsList();
 					}
 
-					function updateActiveFilters() {
-						const activeFiltersDiv = document.getElementById('activeFilters');
-						const filterChipsDiv = document.getElementById('filterChips');
-						
-						const hasFilters = Object.keys(currentFilters).some(key => currentFilters[key]);
-						
-						if (hasFilters) {
-							activeFiltersDiv.style.display = 'block';
-							filterChipsDiv.innerHTML = '';
-							
-							Object.entries(currentFilters).forEach(([key, value]) => {
-								if (value) {
-									const chip = document.createElement('div');
-									chip.className = 'filter-chip';
-									chip.innerHTML = \`
-										<span class="chip-label">\${key}: \${value}</span>
-										<button class="chip-remove" data-filter="\${key}">✕</button>
-									\`;
-									filterChipsDiv.appendChild(chip);
-								}
-							});
-
-							// Add click handlers for remove buttons
-							filterChipsDiv.querySelectorAll('.chip-remove').forEach(btn => {
-								btn.addEventListener('click', () => {
-									vscode.postMessage({ 
-										type: 'removeFilter', 
-										filterType: btn.dataset.filter 
-									});
-								});
-							});
-						} else {
-							activeFiltersDiv.style.display = 'none';
-						}
-					}
 
 					function updateButtonStates() {
 						// Update select dropdown states
