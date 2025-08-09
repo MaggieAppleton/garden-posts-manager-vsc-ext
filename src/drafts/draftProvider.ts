@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { DraftPost, DraftTreeItem, LoadingTreeItem } from "./draftItem";
-import { findDraftFiles } from "./utils";
+import { findDraftFiles } from "../core/utils";
 
 export class DraftProvider implements vscode.TreeDataProvider<DraftTreeItem | LoadingTreeItem> {
 	private _onDidChangeTreeData: vscode.EventEmitter<

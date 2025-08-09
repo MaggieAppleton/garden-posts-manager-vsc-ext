@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as matter from "gray-matter";
 import { Post, ContentType, PostStatistics, DraftStatus } from "./types";
+import { DraftPost } from "../drafts/draftItem";
 
 /**
  * Scan workspace for all MDX files (both draft and published)
@@ -262,4 +263,22 @@ export async function unpromoteToDraft(filePath: string): Promise<boolean> {
 		vscode.window.showErrorMessage(`Failed to convert to draft: ${error instanceof Error ? error.message : 'Unknown error'}`);
 		return false;
 	}
+}
+
+/**
+ * Find draft files in the workspace
+ */
+export async function findDraftFiles(): Promise<DraftPost[]> {
+	const posts = await findAllPosts();
+	const drafts = posts.filter(post => post.status === 'draft');
+	
+	// Convert to DraftPost instances
+	return drafts.map(post => new DraftPost(
+		post.path,
+		post.title,
+		post.wordCount,
+		post.lastModified,
+		post.type,
+		calculateDraftStatus(post.lastModified, post.wordCount)
+	));
 }
