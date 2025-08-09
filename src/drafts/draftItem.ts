@@ -78,7 +78,22 @@ export class DraftPost {
 		const capitalizedType = this.type.charAt(0).toUpperCase() + this.type.slice(1);
 		
 		return `${this.wordCount}w • ${compactTime} • ${capitalizedType}`;
-	}	/**
+	}
+
+	/**
+	 * Get verbose metadata string for tooltip display
+	 */
+	getTooltipMetadataString(): string {
+		const timeAgo = formatDistanceToNow(this.lastModified, { addSuffix: true });
+		
+		// Format for tooltip: more verbose and natural
+		const verboseTime = timeAgo.replace(/ago$/, 'ago');
+		
+		// Capitalize the first letter of the content type
+		const capitalizedType = this.type.charAt(0).toUpperCase() + this.type.slice(1);
+		
+		return `${this.wordCount} words ⋅ Last edited ${verboseTime} ⋅ ${capitalizedType}`;
+	}
 
 	/**
 	 * Get status icon path for tree view display
@@ -104,7 +119,7 @@ export class DraftTreeItem extends vscode.TreeItem {
 
 		super(truncatedTitle, collapsibleState);
 
-		this.tooltip = `${draft.title}\n${draft.getMetadataString()}`;
+		this.tooltip = `${draft.title}\n${draft.getTooltipMetadataString()}`;
 		this.description = draft.getMetadataString();
 		this.contextValue = "draft";
 		

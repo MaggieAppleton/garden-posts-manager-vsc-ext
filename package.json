@@ -10,7 +10,10 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*"
+		"onView:draftManager",
+		"onView:postManager",
+		"onCommand:draftManager.refresh",
+		"onCommand:postManager.refresh"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -27,18 +30,21 @@
 			"explorer": [
 				{
 					"id": "draftManager",
-					"name": "Drafts"
+					"name": "Drafts",
+					"icon": "$(edit)"
 				}
 			],
 			"postManager": [
 				{
 					"id": "postFilters",
 					"name": "All Posts",
-					"type": "webview"
+					"type": "webview",
+					"icon": "$(filter)"
 				},
 				{
 					"id": "postStatistics",
-					"name": "Statistics"
+					"name": "Statistics",
+					"icon": "$(graph)"
 				}
 			]
 		},
@@ -58,7 +64,7 @@
 			},
 			{
 				"command": "draftManager.showInExplorer",
-				"title": "Show in Explorer"
+				"title": "Open in Finder"
 			},
 			{
 				"command": "postManager.refresh",
@@ -104,11 +110,6 @@
 				}
 			],
 			"view/item/context": [
-				{
-					"command": "draftManager.openDraft",
-					"when": "view == draftManager && viewItem == draft",
-					"group": "1_open"
-				},
 				{
 					"command": "draftManager.promoteDraft",
 					"when": "view == draftManager && viewItem == draft",
