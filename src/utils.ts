@@ -2,29 +2,30 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as matter from "gray-matter";
 import { Post, ContentType, PostStatistics } from "./shared/types";
+import { DraftPost, DraftStatus } from "./draftItem";
 
 /**
  * Find draft files in the workspace
  */
-export async function findDraftFiles(): Promise<any[]> {
+export async function findDraftFiles(): Promise<DraftPost[]> {
 	const posts = await findAllPosts();
 	const drafts = posts.filter(post => post.status === 'draft');
 	
-	// Convert to DraftPost-like objects
-	return drafts.map(post => ({
-		path: post.path,
-		title: post.title,
-		wordCount: post.wordCount,
-		lastModified: post.lastModified,
-		type: post.type,
-		status: calculateDraftStatus(post.lastModified, post.wordCount)
-	}));
+	// Convert to DraftPost instances
+	return drafts.map(post => new DraftPost(
+		post.path,
+		post.title,
+		post.wordCount,
+		post.lastModified,
+		post.type,
+		calculateDraftStatus(post.lastModified, post.wordCount)
+	));
 }
 
 /**
  * Calculate draft status based on freshness and word count
  */
-function calculateDraftStatus(lastModified: Date, wordCount: number): string {
+function calculateDraftStatus(lastModified: Date, wordCount: number): DraftStatus {
 	const now = new Date();
 	const daysSinceModified = Math.floor((now.getTime() - lastModified.getTime()) / (1000 * 60 * 60 * 24));
 	
