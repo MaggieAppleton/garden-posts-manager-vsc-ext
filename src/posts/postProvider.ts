@@ -183,6 +183,8 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Load
 	}
 	private applyFilters(): void {
 		let filtered = [...this.allPosts];
+		console.log(`POST PROVIDER: Applying filters to ${this.allPosts.length} posts`);
+		console.log(`POST PROVIDER: Current filters:`, this.currentFilters);
 
 		// Apply search query filter
 		if (this.currentFilters.query) {
@@ -215,6 +217,7 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Load
 		}
 
 		this.filteredPosts = filtered;
+		console.log(`POST PROVIDER: Filtered to ${this.filteredPosts.length} posts`);
 	}
 
 	/**

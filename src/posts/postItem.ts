@@ -9,18 +9,18 @@ export class PostTreeItem extends vscode.TreeItem {
 		public readonly extensionPath: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.None
 	) {
-		// Truncate title to 25 characters for posts view (bit more space than drafts)
-		const truncatedTitle = post.title.length > 25 
-			? post.title.substring(0, 25) + "..."
+		// Truncate title to 28 characters to match draft format
+		const truncatedTitle = post.title.length > 28 
+			? post.title.substring(0, 28) + "..."
 			: post.title;
 
 		super(truncatedTitle, collapsibleState);
 
-		this.tooltip = `${post.title}\n${this.getMetadataString()}\nStatus: ${post.status}\nPath: ${post.path}`;
+		this.tooltip = `${post.title}\n${this.getMetadataString()}`;
 		this.description = this.getMetadataString();
 		this.contextValue = post.status; // 'draft' or 'published'
 		
-		// Set icon based on status and type
+		// Set simple icon based on status
 		this.iconPath = this.getStatusIcon();
 
 		// Set command to open post when clicked
@@ -34,7 +34,7 @@ export class PostTreeItem extends vscode.TreeItem {
 	private getMetadataString(): string {
 		const timeAgo = formatDistanceToNow(this.post.lastModified, { addSuffix: false });
 		
-		// Convert to more compact format for tree view
+		// Convert to more compact format for tree view (same as drafts)
 		const compactTime = timeAgo
 			.replace(/about /g, '~')
 			.replace(/ days?/g, 'd')
@@ -46,15 +46,15 @@ export class PostTreeItem extends vscode.TreeItem {
 		// Capitalize the first letter of the content type
 		const capitalizedType = this.post.type.charAt(0).toUpperCase() + this.post.type.slice(1);
 		
-		return `${this.post.wordCount}w • ${compactTime} • ${capitalizedType}`;
+		return `${capitalizedType} • ${this.post.wordCount}w • ${compactTime}`;
 	}
 
 	private getStatusIcon(): vscode.ThemeIcon {
 		if (this.post.status === 'draft') {
-			// Use theme icons for drafts (similar to original system)
+			// Draft posts use edit/pencil icon
 			return new vscode.ThemeIcon('edit');
 		} else {
-			// Published posts get a different icon
+			// Published posts use check/checkmark icon  
 			return new vscode.ThemeIcon('check');
 		}
 	}

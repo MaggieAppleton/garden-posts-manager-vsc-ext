@@ -70,6 +70,7 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 	}
 
 	public updatePosts(posts: Post[], filteredPosts: Post[], filters: any) {
+		console.log(`FILTER WEBVIEW: updatePosts called with ${posts.length} total posts, ${filteredPosts.length} filtered posts`);
 		this._posts = posts;
 		this._filteredPosts = filteredPosts;
 		this._filters = filters;
@@ -78,6 +79,7 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 
 	private _updateWebview() {
 		if (this._view) {
+			console.log(`FILTER WEBVIEW: Sending message to webview with ${this._filteredPosts.length} filtered posts`);
 			this._view.webview.postMessage({
 				type: 'updateData',
 				posts: this._posts,
@@ -85,6 +87,8 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 				filters: this._filters,
 				availableTypes: [...new Set(this._posts.map(p => p.type))].sort()
 			});
+		} else {
+			console.log(`FILTER WEBVIEW: No webview available to update`);
 		}
 	}
 
@@ -312,46 +316,56 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 							const postItem = document.createElement('div');
 							postItem.className = \`post-item \${post.status}\`;
 							
+							// Simple single-line format like tree view
 							const statusIcon = post.status === 'draft' ? '📝' : '✅';
-							const typeLabel = post.type;
+							const typeLabel = post.type.charAt(0).toUpperCase() + post.type.slice(1);
 							const wordCount = post.wordCount;
-							const date = new Date(post.lastModified).toLocaleDateString();
+							
+							// Format time like in tree view
+							const timeAgo = new Date(post.lastModified);
+							const now = new Date();
+							const diffTime = Math.abs(now - timeAgo);
+							const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+							
+							let timeString;
+							if (diffDays === 1) {
+								timeString = '1d';
+							} else if (diffDays < 7) {
+								timeString = diffDays + 'd';
+							} else if (diffDays < 30) {
+								timeString = Math.ceil(diffDays / 7) + 'w';
+							} else if (diffDays < 365) {
+								timeString = Math.ceil(diffDays / 30) + 'mo';
+							} else {
+								timeString = Math.ceil(diffDays / 365) + 'y';
+							}
+							
+							// Truncate title to match tree view
+							const truncatedTitle = post.title.length > 28 
+								? post.title.substring(0, 28) + "..."
+								: post.title;
 							
 							postItem.innerHTML = \`
-								<div class="post-header">
-									<span class="post-status">\${statusIcon}</span>
-									<div class="post-title">\${post.title}</div>
-									<button class="post-open" data-path="\${post.path}">Open</button>
+								<div class="post-line">
+									<span class="post-icon">\${statusIcon}</span>
+									<span class="post-title-text">\${truncatedTitle}</span>
+									<span class="post-metadata">\${typeLabel} • \${wordCount}w • \${timeString}</span>
 								</div>
-								<div class="post-meta">
-									<span class="post-type">\${typeLabel}</span>
-									<span class="post-words">\${wordCount}w</span>
-									<span class="post-date">\${date}</span>
-								</div>
-								\${post.description ? \`<div class="post-description">\${post.description}</div>\` : ''}
 							\`;
 							
 							postsList.appendChild(postItem);
 						});
 
-						// Add click handlers for open buttons
-						postsList.querySelectorAll('.post-open').forEach(btn => {
-							btn.addEventListener('click', () => {
-								vscode.postMessage({ 
-									type: 'openPost', 
-									path: btn.dataset.path 
-								});
-							});
-						});
-
 						// Add click handlers for post items
 						postsList.querySelectorAll('.post-item').forEach(item => {
-							item.addEventListener('click', (e) => {
-								if (!e.target.classList.contains('post-open')) {
-									const openBtn = item.querySelector('.post-open');
-									if (openBtn) {
-										openBtn.click();
-									}
+							item.addEventListener('click', () => {
+								const index = Array.from(item.parentNode.children).indexOf(item);
+								const post = filteredPosts[index];
+								if (post) {
+									vscode.postMessage({ 
+										type: 'openPost', 
+										path: post.path 
+									});
 								}
 							});
 						});
