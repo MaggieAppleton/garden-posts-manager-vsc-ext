@@ -70,51 +70,55 @@ body {
     margin-bottom: 8px;
 }
 
-/* Active Filters */
-.active-filters {
-    background: var(--vscode-badge-background);
-    border-radius: 6px;
-    padding: 12px;
-    border: 1px solid var(--vscode-widget-border);
+/* Active Filters - Compact Style */
+.active-filters-compact {
+    margin-top: 8px;
+    padding: 6px 0;
+    border-top: 1px solid var(--vscode-widget-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
 
-.filter-chips {
+.filter-chips-inline {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 10px;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
 }
 
 .filter-chip {
     display: inline-flex;
     align-items: center;
-    background: var(--vscode-button-secondaryBackground);
-    border: 1px solid var(--vscode-button-border);
-    border-radius: 12px;
-    padding: 4px 8px;
-    font-size: 11px;
-    gap: 6px;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+    border-radius: 8px;
+    padding: 2px 6px;
+    font-size: 10px;
+    gap: 4px;
+    white-space: nowrap;
 }
 
 .chip-label {
-    color: var(--vscode-button-secondaryForeground);
     font-weight: 500;
 }
 
 .chip-remove {
     background: none;
     border: none;
-    color: var(--vscode-button-secondaryForeground);
+    color: var(--vscode-badge-foreground);
     cursor: pointer;
     padding: 0;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
-    opacity: 0.8;
+    font-size: 8px;
+    opacity: 0.7;
+    line-height: 1;
 }
 
 .chip-remove:hover {
@@ -123,19 +127,23 @@ body {
     color: var(--vscode-errorForeground);
 }
 
-.clear-all-btn {
-    background: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
+.clear-all-compact {
+    background: none;
+    color: var(--vscode-descriptionForeground);
     border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-    font-size: 11px;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 10px;
     cursor: pointer;
     font-weight: 500;
+    text-decoration: underline;
+    white-space: nowrap;
 }
 
-.clear-all-btn:hover {
-    background: var(--vscode-button-hoverBackground);
+.clear-all-compact:hover {
+    color: var(--vscode-foreground);
+    background: var(--vscode-toolbar-hoverBackground);
+    text-decoration: none;
 }
 
 .filter-buttons {
@@ -166,11 +174,6 @@ body {
     background: var(--vscode-button-background);
     color: var(--vscode-button-foreground);
     border-color: var(--vscode-focusBorder);
-}
-
-/* Advanced Filters */
-.advanced-filters {
-    /* Section exists */
 }
 
 .filter-group {

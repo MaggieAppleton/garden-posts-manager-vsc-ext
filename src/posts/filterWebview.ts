@@ -113,16 +113,9 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 						</div>
 					</div>
 
-					<!-- Active Filters -->
-					<div id="activeFilters" class="active-filters" style="display: none;">
-						<div class="section-title">Active Filters</div>
-						<div id="filterChips" class="filter-chips"></div>
-						<button id="clearAllFilters" class="clear-all-btn">Clear All</button>
-					</div>
-
-					<!-- Advanced Filters -->
-					<div class="advanced-filters">
-						<div class="section-title">Advanced Filters</div>
+					<!-- Filters -->
+					<div class="filters">
+						<div class="section-title">Filters</div>
 						<div class="filter-group">
 							<label for="statusSelect">Status:</label>
 							<select id="statusSelect">
@@ -136,6 +129,12 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 							<select id="typeSelect">
 								<option value="">All Types</option>
 							</select>
+						</div>
+						
+						<!-- Active Filters (compact chips) -->
+						<div id="activeFilters" class="active-filters-compact" style="display: none;">
+							<div id="filterChips" class="filter-chips-inline"></div>
+							<button id="clearAllFilters" class="clear-all-compact">Clear All</button>
 						</div>
 					</div>
 
