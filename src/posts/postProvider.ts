@@ -1,18 +1,7 @@
 import * as vscode from "vscode";
-import { Post } from "../shared/types";
-import { findAllPosts } from "../shared/utils";
+import { Post, SearchFilters, ContentType } from "../core/types";
+import { findAllPosts } from "../core/utils";
 import { PostTreeItem, PostSectionItem } from "./postItem";
-import { FilterItem, SeparatorItem } from "./filterItem";
-
-export interface SearchFilters {
-	query?: string;
-	status?: 'draft' | 'published';
-	type?: string;
-	dateRange?: {
-		start: Date;
-		end: Date;
-	};
-}
 
 // Helper tree items for loading, error, and success states
 class PostsLoadingTreeItem extends vscode.TreeItem {
@@ -39,9 +28,9 @@ class PostsSuccessTreeItem extends vscode.TreeItem {
 	}
 }
 
-export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | FilterItem | SeparatorItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem> {
-	private _onDidChangeTreeData: vscode.EventEmitter<PostTreeItem | FilterItem | SeparatorItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem | undefined | null | void> = new vscode.EventEmitter();
-	readonly onDidChangeTreeData: vscode.Event<PostTreeItem | FilterItem | SeparatorItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
+export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem> {
+	private _onDidChangeTreeData: vscode.EventEmitter<PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem | undefined | null | void> = new vscode.EventEmitter();
+	readonly onDidChangeTreeData: vscode.Event<PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
 	private allPosts: Post[] = [];
 	private filteredPosts: Post[] = [];
@@ -98,14 +87,14 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Filt
 	/**
 	 * Get tree item for display
 	 */
-	getTreeItem(element: PostTreeItem | FilterItem | SeparatorItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem): vscode.TreeItem {
+	getTreeItem(element: PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem): vscode.TreeItem {
 		return element;
 	}
 
 	/**
 	 * Get children for tree view
 	 */
-	getChildren(element?: PostTreeItem | FilterItem | SeparatorItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem): Thenable<(PostTreeItem | FilterItem | SeparatorItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem)[]> {
+	getChildren(element?: PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem): Thenable<(PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem)[]> {
 		if (!element) {
 			// Root level - show loading, error, success, or posts
 			if (this.isLoading) {
@@ -155,15 +144,6 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Filt
 			filtered = filtered.filter((post: Post) => post.type === this.currentFilters.type);
 		}
 
-		// Apply date range filter
-		if (this.currentFilters.dateRange) {
-			filtered = filtered.filter((post: Post) => {
-				const postDate = post.publishedDate || post.lastModified;
-				return postDate >= this.currentFilters.dateRange!.start && 
-					   postDate <= this.currentFilters.dateRange!.end;
-			});
-		}
-
 		this.filteredPosts = filtered;
 	}
 
@@ -188,12 +168,12 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Filt
 	/**
 	 * Set type filter
 	 */
-	setTypeFilter(type: string | undefined): void {
+	setTypeFilter(type: ContentType | undefined): void {
 		this.currentFilters.type = type;
 		this.applyFilters();
 		this._onDidChangeTreeData.fire(undefined);
 	}
-	
+
 	/**
 	 * Clear all filters
 	 */

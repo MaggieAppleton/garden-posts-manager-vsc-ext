@@ -1,5 +1,7 @@
 export type ContentType = "note" | "essay" | "smidgeon" | "now" | "pattern" | "talk";
 
+export type DraftStatus = "fresh" | "stale" | "default";
+
 export interface Post {
   path: string;
   title: string;
@@ -28,4 +30,10 @@ export interface PostStatistics {
     medium: number;   // 300-1000
     long: number;     // >1000
   };
+}
+
+export interface SearchFilters {
+  query?: string;
+  status?: 'draft' | 'published';
+  type?: ContentType;
 }

@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
-import { DraftProvider } from "./draftProvider";
-import { DraftPost, DraftTreeItem, LoadingTreeItem } from "./draftItem";
-import { promoteDraft, unpromoteToDraft } from "./utils";
+import { DraftProvider } from "./drafts/draftProvider";
+import { DraftPost, DraftTreeItem, LoadingTreeItem } from "./drafts/draftItem";
+import { promoteDraft, unpromoteToDraft } from "./core/utils";
 import { PostProvider } from "./posts/postProvider";
 import { StatisticsProvider } from "./posts/statisticsProvider";
 import { FilterWebviewProvider } from "./posts/filterWebview";
-import { openPost, showPostInExplorer, copyPostPath } from "./posts/postCommands";
-import { Post } from "./shared/types";
+import { openPost } from "./posts/postCommands";
+import { Post, ContentType } from "./core/types";
 
 export function activate(context: vscode.ExtensionContext) {
 	try {
@@ -298,7 +298,7 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 
 			if (selected) {
-				postProvider.setTypeFilter(selected.value);
+				postProvider.setTypeFilter(selected.value as ContentType | undefined);
 			}
 		}
 	);

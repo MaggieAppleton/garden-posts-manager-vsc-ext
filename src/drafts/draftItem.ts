@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { formatDistanceToNow } from "date-fns";
-
-export type DraftStatus = "fresh" | "stale" | "default";
+import { DraftStatus } from "../core/types";
 
 export class LoadingTreeItem extends vscode.TreeItem {
 	constructor() {

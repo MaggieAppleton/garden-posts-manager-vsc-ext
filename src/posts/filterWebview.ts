@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Post } from "../shared/types";
+import { Post } from "../core/types";
 
 export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'postManager.filterView';

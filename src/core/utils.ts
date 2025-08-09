@@ -1,99 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as matter from "gray-matter";
-import { Post, ContentType, PostStatistics } from "./shared/types";
-import { DraftPost, DraftStatus } from "./draftItem";
-
-/**
- * Find draft files in the workspace
- */
-export async function findDraftFiles(): Promise<DraftPost[]> {
-	const posts = await findAllPosts();
-	const drafts = posts.filter(post => post.status === 'draft');
-	
-	// Convert to DraftPost instances
-	return drafts.map(post => new DraftPost(
-		post.path,
-		post.title,
-		post.wordCount,
-		post.lastModified,
-		post.type,
-		calculateDraftStatus(post.lastModified, post.wordCount)
-	));
-}
-
-/**
- * Calculate draft status based on freshness and word count
- */
-function calculateDraftStatus(lastModified: Date, wordCount: number): DraftStatus {
-	const now = new Date();
-	const daysSinceModified = Math.floor((now.getTime() - lastModified.getTime()) / (1000 * 60 * 60 * 24));
-	
-	if (daysSinceModified <= 30) {
-		return "fresh";
-	} else if (daysSinceModified >= 180 || wordCount < 300) {
-		return "stale";
-	} else {
-		return "default";
-	}
-}
-
-/**
- * Promote a draft to published status
- */
-export async function promoteDraft(filePath: string): Promise<boolean> {
-	try {
-		const fileUri = vscode.Uri.file(filePath);
-		const fileContent = await vscode.workspace.fs.readFile(fileUri);
-		const contentString = Buffer.from(fileContent).toString("utf8");
-		
-		const parsed = matter(contentString);
-		
-		// Remove draft: true from frontmatter or set it to false
-		delete parsed.data.draft;
-		
-		// Add published date if not present
-		if (!parsed.data.publishedDate && !parsed.data.date) {
-			parsed.data.publishedDate = new Date().toISOString().split('T')[0];
-		}
-		
-		const newContent = matter.stringify(parsed.content, parsed.data);
-		await vscode.workspace.fs.writeFile(fileUri, Buffer.from(newContent, 'utf8'));
-		
-		vscode.window.showInformationMessage(`Promoted draft: ${path.basename(filePath)}`);
-		return true;
-	} catch (error) {
-		console.error('Error promoting draft:', error);
-		vscode.window.showErrorMessage(`Failed to promote draft: ${error instanceof Error ? error.message : 'Unknown error'}`);
-		return false;
-	}
-}
-
-/**
- * Convert a published post back to draft status
- */
-export async function unpromoteToDraft(filePath: string): Promise<boolean> {
-	try {
-		const fileUri = vscode.Uri.file(filePath);
-		const fileContent = await vscode.workspace.fs.readFile(fileUri);
-		const contentString = Buffer.from(fileContent).toString("utf8");
-		
-		const parsed = matter(contentString);
-		
-		// Set draft: true in frontmatter
-		parsed.data.draft = true;
-		
-		const newContent = matter.stringify(parsed.content, parsed.data);
-		await vscode.workspace.fs.writeFile(fileUri, Buffer.from(newContent, 'utf8'));
-		
-		vscode.window.showInformationMessage(`Converted to draft: ${path.basename(filePath)}`);
-		return true;
-	} catch (error) {
-		console.error('Error converting to draft:', error);
-		vscode.window.showErrorMessage(`Failed to convert to draft: ${error instanceof Error ? error.message : 'Unknown error'}`);
-		return false;
-	}
-}
+import { Post, ContentType, PostStatistics, DraftStatus } from "./types";
 
 /**
  * Scan workspace for all MDX files (both draft and published)
@@ -281,4 +189,77 @@ export function calculatePostStatistics(posts: Post[]): PostStatistics {
 		typeBreakdown,
 		wordCountDistribution
 	};
+}
+
+/**
+ * Calculate draft status based on freshness and word count
+ */
+export function calculateDraftStatus(lastModified: Date, wordCount: number): DraftStatus {
+	const now = new Date();
+	const daysSinceModified = Math.floor((now.getTime() - lastModified.getTime()) / (1000 * 60 * 60 * 24));
+	
+	if (daysSinceModified <= 30) {
+		return "fresh";
+	} else if (daysSinceModified >= 180 || wordCount < 300) {
+		return "stale";
+	} else {
+		return "default";
+	}
+}
+
+/**
+ * Promote a draft to published status
+ */
+export async function promoteDraft(filePath: string): Promise<boolean> {
+	try {
+		const fileUri = vscode.Uri.file(filePath);
+		const fileContent = await vscode.workspace.fs.readFile(fileUri);
+		const contentString = Buffer.from(fileContent).toString("utf8");
+		
+		const parsed = matter(contentString);
+		
+		// Remove draft: true from frontmatter or set it to false
+		delete parsed.data.draft;
+		
+		// Add published date if not present
+		if (!parsed.data.publishedDate && !parsed.data.date) {
+			parsed.data.publishedDate = new Date().toISOString().split('T')[0];
+		}
+		
+		const newContent = matter.stringify(parsed.content, parsed.data);
+		await vscode.workspace.fs.writeFile(fileUri, Buffer.from(newContent, 'utf8'));
+		
+		vscode.window.showInformationMessage(`Promoted draft: ${path.basename(filePath)}`);
+		return true;
+	} catch (error) {
+		console.error('Error promoting draft:', error);
+		vscode.window.showErrorMessage(`Failed to promote draft: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		return false;
+	}
+}
+
+/**
+ * Convert a published post back to draft status
+ */
+export async function unpromoteToDraft(filePath: string): Promise<boolean> {
+	try {
+		const fileUri = vscode.Uri.file(filePath);
+		const fileContent = await vscode.workspace.fs.readFile(fileUri);
+		const contentString = Buffer.from(fileContent).toString("utf8");
+		
+		const parsed = matter(contentString);
+		
+		// Set draft: true in frontmatter
+		parsed.data.draft = true;
+		
+		const newContent = matter.stringify(parsed.content, parsed.data);
+		await vscode.workspace.fs.writeFile(fileUri, Buffer.from(newContent, 'utf8'));
+		
+		vscode.window.showInformationMessage(`Converted to draft: ${path.basename(filePath)}`);
+		return true;
+	} catch (error) {
+		console.error('Error converting to draft:', error);
+		vscode.window.showErrorMessage(`Failed to convert to draft: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		return false;
+	}
 }

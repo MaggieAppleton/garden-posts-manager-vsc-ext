@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { formatDistanceToNow } from "date-fns";
-import { Post, PostStatistics } from "../shared/types";
+import { Post, PostStatistics } from "../core/types";
 
 export class PostTreeItem extends vscode.TreeItem {
 	constructor(

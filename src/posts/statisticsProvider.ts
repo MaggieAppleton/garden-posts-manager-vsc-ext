@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { Post, PostStatistics } from "../shared/types";
-import { calculatePostStatistics } from "../shared/utils";
+import { Post, PostStatistics } from "../core/types";
+import { calculatePostStatistics } from "../core/utils";
 import { StatisticsItem, LoadingTreeItem } from "./postItem";
 
 export class StatisticsProvider implements vscode.TreeDataProvider<StatisticsItem | LoadingTreeItem> {
