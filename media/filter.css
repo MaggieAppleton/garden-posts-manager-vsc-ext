@@ -25,21 +25,32 @@ body {
     align-items: center;
 }
 
+.search-icon {
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    color: var(--vscode-descriptionForeground);
+    pointer-events: none;
+    z-index: 1;
+}
+
 #searchInput {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--vscode-input-border);
+    padding: 8px 12px 8px 32px;
+    border: 1px solid #424242;
     border-radius: 4px;
     background: var(--vscode-input-background);
     color: var(--vscode-input-foreground);
     font-size: 13px;
-    outline: none;
+    outline: none !important;
     box-sizing: border-box;
 }
 
 #searchInput:focus {
-    border-color: var(--vscode-focusBorder);
-    box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+    border-color: var(--vscode-focusBorder) !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .clear-btn {
@@ -146,16 +157,18 @@ body {
 .filter-group select {
     width: 100%;
     padding: 6px 8px;
-    border: 1px solid var(--vscode-input-border);
+    border: 1px solid #424242;
     border-radius: 4px;
     background: var(--vscode-dropdown-background);
     color: var(--vscode-dropdown-foreground);
     font-size: 12px;
-    outline: none;
+    outline: none !important;
 }
 
 .filter-group select:focus {
-    border-color: var(--vscode-focusBorder);
+    border-color: var(--vscode-focusBorder) !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 /* Results Section */
@@ -166,33 +179,23 @@ body {
 
 .results-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 12px;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--vscode-descriptionForeground);
+    color: var(--vscode-foreground);
 }
 
 #resultCount {
-    color: var(--vscode-charts-blue);
+    color: var(--vscode-foreground);
     font-weight: 700;
-}
-
-.toggle-btn {
-    background: var(--vscode-button-secondaryBackground);
-    border: 1px solid var(--vscode-button-border);
-    border-radius: 4px;
-    padding: 4px 8px;
-    cursor: pointer;
-    font-size: 12px;
 }
 
 /* Posts List */
 .posts-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
 .post-item {
@@ -219,10 +222,18 @@ body {
 }
 
 .post-icon {
-    font-size: 12px;
-    width: 16px;
-    text-align: center;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+}
+
+.post-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
 }
 
 .post-title-text {
@@ -235,7 +246,7 @@ body {
 }
 
 .post-metadata {
-    color: var(--vscode-descriptionForeground);
+    color: #6b7280;
     font-size: 11px;
     font-weight: 400;
     flex-shrink: 0;

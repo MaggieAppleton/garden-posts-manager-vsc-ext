@@ -99,7 +99,10 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 					<!-- Search Section -->
 					<div class="search-section">
 						<div class="search-box">
-							<input type="text" id="searchInput" placeholder="🔍 Search posts..." />
+							<svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+							</svg>
+							<input type="text" id="searchInput" placeholder="Search posts..." />
 							<button id="clearSearch" class="clear-btn" style="display: none;">✕</button>
 						</div>
 					</div>
@@ -129,8 +132,7 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 					<!-- Results Section -->
 					<div class="results-section">
 						<div class="results-header">
-							<span id="resultCount">0</span> posts
-							<button id="toggleView" class="toggle-btn">📋</button>
+							<span id="resultCount">0 Posts</span>
 						</div>
 						<div id="postsList" class="posts-list"></div>
 					</div>
@@ -211,7 +213,7 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 						   clearAllFiltersBtn.style.display = hasFilters ? 'block' : 'none';
 
 						// Update results count
-						document.getElementById('resultCount').textContent = filteredPosts.length;
+						document.getElementById('resultCount').textContent = filteredPosts.length + ' Posts';
 
 						// Update button states
 						updateButtonStates();
@@ -242,8 +244,10 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 							const postItem = document.createElement('div');
 							postItem.className = \`post-item \${post.status}\`;
 							
-							// Simple single-line format like tree view
-							const statusIcon = post.status === 'draft' ? '📝' : '✅';
+							// Simple single-line format like tree view with Heroicons
+							const statusIcon = post.status === 'draft' 
+								? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6b7280"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 1 1 3.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>'
+								: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#3BC7B9"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>';
 							const typeLabel = post.type.charAt(0).toUpperCase() + post.type.slice(1);
 							const wordCount = post.wordCount;
 							
@@ -267,8 +271,8 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 							}
 							
 							// Truncate title to match tree view
-							const truncatedTitle = post.title.length > 28 
-								? post.title.substring(0, 28) + "..."
+							const truncatedTitle = post.title.length > 32 
+								? post.title.substring(0, 32) + "..."
 								: post.title;
 							
 							postItem.innerHTML = \`
