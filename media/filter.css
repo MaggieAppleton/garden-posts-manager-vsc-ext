@@ -138,11 +138,6 @@ body {
     background: var(--vscode-button-hoverBackground);
 }
 
-/* Quick Filters */
-.quick-filters {
-    /* Section exists */
-}
-
 .filter-buttons {
     display: flex;
     flex-direction: column;

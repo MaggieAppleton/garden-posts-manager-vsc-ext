@@ -120,19 +120,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 						<button id="clearAllFilters" class="clear-all-btn">Clear All</button>
 					</div>
 
-					<!-- Quick Filters -->
-					<div id="quickFilters" class="quick-filters">
-						<div class="section-title">Quick Filters</div>
-						<div class="filter-buttons">
-							<button class="filter-btn status-filter" data-status="draft">
-								📝 Drafts Only
-							</button>
-							<button class="filter-btn status-filter" data-status="published">
-								✅ Published Only
-							</button>
-						</div>
-					</div>
-
 					<!-- Advanced Filters -->
 					<div class="advanced-filters">
 						<div class="section-title">Advanced Filters</div>
@@ -183,18 +170,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 						searchInput.value = '';
 						clearSearch.style.display = 'none';
 						vscode.postMessage({ type: 'setSearch', value: '' });
-					});
-
-					// Status filter buttons
-					document.querySelectorAll('.status-filter').forEach(btn => {
-						btn.addEventListener('click', () => {
-							const status = btn.dataset.status;
-							const isActive = btn.classList.contains('active');
-							vscode.postMessage({ 
-								type: 'setStatus', 
-								value: isActive ? '' : status 
-							});
-						});
 					});
 
 					// Select dropdowns
@@ -253,10 +228,6 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 
 						// Update posts list
 						updatePostsList();
-
-						// Hide quick filters if filters are active
-						const hasFilters = Object.keys(currentFilters).some(key => currentFilters[key]);
-						document.getElementById('quickFilters').style.display = hasFilters ? 'none' : 'block';
 					}
 
 					function updateActiveFilters() {
@@ -296,15 +267,15 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 					}
 
 					function updateButtonStates() {
-						// Update quick filter button states
-						document.querySelectorAll('.status-filter').forEach(btn => {
-							const isActive = currentFilters.status === btn.dataset.status;
-							btn.classList.toggle('active', isActive);
-						});
+						// Update select dropdown states
+						const statusSelect = document.getElementById('statusSelect');
+						const typeSelect = document.getElementById('typeSelect');
+						
+						statusSelect.value = currentFilters.status || '';
+						typeSelect.value = currentFilters.type || '';
 					}
 
 					function updatePostsList() {
-						const postsList = document.getElementById('postsList');
 						postsList.innerHTML = '';
 
 						if (filteredPosts.length === 0) {

@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 export class FilterItem extends vscode.TreeItem {
 	constructor(
 		public readonly label: string,
-		public readonly filterType: 'search' | 'status' | 'type' | 'clear' | 'quick',
+		public readonly filterType: 'search' | 'status' | 'type' | 'clear',
 		public readonly value: string | undefined,
 		public readonly isActive: boolean = false
 	) {
@@ -42,12 +42,6 @@ export class FilterItem extends vscode.TreeItem {
 					title: 'Clear All Filters',
 					arguments: []
 				};
-			case 'quick':
-				return {
-					command: 'postManager.quickFilter',
-					title: 'Quick Filter',
-					arguments: [this.value]
-				};
 			default:
 				return undefined;
 		}
@@ -63,8 +57,6 @@ export class FilterItem extends vscode.TreeItem {
 				return new vscode.ThemeIcon(this.isActive ? 'symbol-tag' : 'tag');
 			case 'clear':
 				return new vscode.ThemeIcon('close-all');
-			case 'quick':
-				return new vscode.ThemeIcon('zap');
 			default:
 				return undefined;
 		}
@@ -87,8 +79,6 @@ export class FilterItem extends vscode.TreeItem {
 				return this.isActive ? `Filtering by type: ${this.value}` : 'Filter posts by content type';
 			case 'clear':
 				return 'Remove all active filters';
-			case 'quick':
-				return `Quick filter: ${this.value}`;
 			default:
 				return undefined;
 		}

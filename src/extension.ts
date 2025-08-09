@@ -325,13 +325,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	);
 
-	const quickFilterCommand = vscode.commands.registerCommand(
-		"postManager.quickFilter",
-		(filterValue: string) => {
-			// Quick filters are status filters
-			postProvider.setStatusFilter(filterValue as 'draft' | 'published');
-		}
-	);
+
 
 	const showStatisticsCommand = vscode.commands.registerCommand(
 		"postManager.showStatistics",
@@ -364,7 +358,6 @@ export function activate(context: vscode.ExtensionContext) {
 		filterByTypeCommand,
 		clearFiltersCommand,
 		removeFilterCommand,
-		quickFilterCommand,
 		showStatisticsCommand
 	);
 	

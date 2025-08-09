@@ -142,19 +142,6 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Load
 	}
 
 	/**
-	 * Create quick filter buttons
-	 */
-	private createQuickFilterItems(): FilterItem[] {
-		const items: FilterItem[] = [];
-		
-		// Quick status filters
-		items.push(new FilterItem("⚡ Drafts Only", 'quick', 'draft', false));
-		items.push(new FilterItem("⚡ Published Only", 'quick', 'published', false));
-		
-		return items;
-	}
-
-	/**
 	 * Create active filter indicator items
 	 */
 	private createActiveFilterItems(): ActiveFilterItem[] {

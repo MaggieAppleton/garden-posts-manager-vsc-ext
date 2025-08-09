@@ -94,10 +94,6 @@
 				"title": "Remove Filter"
 			},
 			{
-				"command": "postManager.quickFilter",
-				"title": "Quick Filter"
-			},
-			{
 				"command": "postManager.showStatistics",
 				"title": "Show Detailed Statistics",
 				"icon": "$(graph)"
