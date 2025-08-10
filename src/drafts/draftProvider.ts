@@ -2,10 +2,14 @@ import * as vscode from "vscode";
 import { DraftPost, DraftTreeItem, LoadingTreeItem } from "./draftItem";
 import { findDraftFiles } from "../core/utils";
 
-export class DraftProvider implements vscode.TreeDataProvider<DraftTreeItem | LoadingTreeItem> {
+export class DraftProvider
+	implements vscode.TreeDataProvider<DraftTreeItem | LoadingTreeItem>
+{
 	private _onDidChangeTreeData: vscode.EventEmitter<
 		DraftTreeItem | LoadingTreeItem | undefined | null | void
-	> = new vscode.EventEmitter<DraftTreeItem | LoadingTreeItem | undefined | null | void>();
+	> = new vscode.EventEmitter<
+		DraftTreeItem | LoadingTreeItem | undefined | null | void
+	>();
 	readonly onDidChangeTreeData: vscode.Event<
 		DraftTreeItem | LoadingTreeItem | undefined | null | void
 	> = this._onDidChangeTreeData.event;
@@ -42,9 +46,9 @@ export class DraftProvider implements vscode.TreeDataProvider<DraftTreeItem | Lo
 			console.log("Refreshing drafts...");
 			this.isLoading = true;
 			this._onDidChangeTreeData.fire(); // Show loading state
-			
+
 			this.drafts = await findDraftFiles();
-			
+
 			this.isLoading = false;
 			this._onDidChangeTreeData.fire(); // Show actual results
 		} catch (error) {
@@ -67,13 +71,15 @@ export class DraftProvider implements vscode.TreeDataProvider<DraftTreeItem | Lo
 	/**
 	 * Get children for tree view (root level shows all drafts)
 	 */
-	getChildren(element?: DraftTreeItem | LoadingTreeItem): Thenable<(DraftTreeItem | LoadingTreeItem)[]> {
+	getChildren(
+		element?: DraftTreeItem | LoadingTreeItem
+	): Thenable<(DraftTreeItem | LoadingTreeItem)[]> {
 		if (!element) {
 			// Root level - show loading or drafts
 			if (this.isLoading) {
 				return Promise.resolve([new LoadingTreeItem()]);
 			}
-			
+
 			// Return all drafts as tree items
 			return Promise.resolve(
 				this.drafts.map((draft) => new DraftTreeItem(draft, this.extensionPath))

@@ -7,7 +7,10 @@ import { PostTreeItem, PostSectionItem } from "./postItem";
 class PostsLoadingTreeItem extends vscode.TreeItem {
 	constructor() {
 		super("Loading posts...", vscode.TreeItemCollapsibleState.None);
-		this.iconPath = new vscode.ThemeIcon('sync', new vscode.ThemeColor('charts.blue'));
+		this.iconPath = new vscode.ThemeIcon(
+			"sync",
+			new vscode.ThemeColor("charts.blue")
+		);
 		this.description = "Please wait";
 	}
 }
@@ -15,22 +18,56 @@ class PostsLoadingTreeItem extends vscode.TreeItem {
 class PostsErrorTreeItem extends vscode.TreeItem {
 	constructor(message: string) {
 		super("Error loading posts", vscode.TreeItemCollapsibleState.None);
-		this.iconPath = new vscode.ThemeIcon('error', new vscode.ThemeColor('charts.red'));
+		this.iconPath = new vscode.ThemeIcon(
+			"error",
+			new vscode.ThemeColor("charts.red")
+		);
 		this.description = message;
 	}
 }
 
 class PostsSuccessTreeItem extends vscode.TreeItem {
 	constructor(count: number) {
-		super(count === 0 ? "No posts found" : `Posts loaded: ${count}`, vscode.TreeItemCollapsibleState.None);
-		this.iconPath = new vscode.ThemeIcon(count === 0 ? 'info' : 'check', new vscode.ThemeColor('charts.green'));
-		this.description = count === 0 ? "Try changing your filters or add new posts." : undefined;
+		super(
+			count === 0 ? "No posts found" : `Posts loaded: ${count}`,
+			vscode.TreeItemCollapsibleState.None
+		);
+		this.iconPath = new vscode.ThemeIcon(
+			count === 0 ? "info" : "check",
+			new vscode.ThemeColor("charts.green")
+		);
+		this.description =
+			count === 0 ? "Try changing your filters or add new posts." : undefined;
 	}
 }
 
-export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem> {
-	private _onDidChangeTreeData: vscode.EventEmitter<PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem | undefined | null | void> = new vscode.EventEmitter();
-	readonly onDidChangeTreeData: vscode.Event<PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
+export class PostProvider
+	implements
+		vscode.TreeDataProvider<
+			| PostTreeItem
+			| PostsLoadingTreeItem
+			| PostsErrorTreeItem
+			| PostsSuccessTreeItem
+		>
+{
+	private _onDidChangeTreeData: vscode.EventEmitter<
+		| PostTreeItem
+		| PostsLoadingTreeItem
+		| PostsErrorTreeItem
+		| PostsSuccessTreeItem
+		| undefined
+		| null
+		| void
+	> = new vscode.EventEmitter();
+	readonly onDidChangeTreeData: vscode.Event<
+		| PostTreeItem
+		| PostsLoadingTreeItem
+		| PostsErrorTreeItem
+		| PostsSuccessTreeItem
+		| undefined
+		| null
+		| void
+	> = this._onDidChangeTreeData.event;
 
 	private allPosts: Post[] = [];
 	private filteredPosts: Post[] = [];
@@ -67,16 +104,17 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Post
 			this.isLoading = true;
 			this.errorMessage = null;
 			this._onDidChangeTreeData.fire(undefined);
-			
+
 			this.allPosts = await findAllPosts();
-			
+
 			this.applyFilters();
 			this.isLoading = false;
 			this._onDidChangeTreeData.fire(undefined);
 		} catch (error) {
 			console.error("Error refreshing posts:", error);
 			this.isLoading = false;
-			this.errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+			this.errorMessage =
+				error instanceof Error ? error.message : "Unknown error occurred";
 			this._onDidChangeTreeData.fire(undefined);
 			vscode.window.showErrorMessage(
 				"Failed to refresh posts. Check console for details."
@@ -87,14 +125,33 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Post
 	/**
 	 * Get tree item for display
 	 */
-	getTreeItem(element: PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem): vscode.TreeItem {
+	getTreeItem(
+		element:
+			| PostTreeItem
+			| PostsLoadingTreeItem
+			| PostsErrorTreeItem
+			| PostsSuccessTreeItem
+	): vscode.TreeItem {
 		return element;
 	}
 
 	/**
 	 * Get children for tree view
 	 */
-	getChildren(element?: PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem): Thenable<(PostTreeItem | PostsLoadingTreeItem | PostsErrorTreeItem | PostsSuccessTreeItem)[]> {
+	getChildren(
+		element?:
+			| PostTreeItem
+			| PostsLoadingTreeItem
+			| PostsErrorTreeItem
+			| PostsSuccessTreeItem
+	): Thenable<
+		(
+			| PostTreeItem
+			| PostsLoadingTreeItem
+			| PostsErrorTreeItem
+			| PostsSuccessTreeItem
+		)[]
+	> {
 		if (!element) {
 			// Root level - show loading, error, success, or posts
 			if (this.isLoading) {
@@ -109,7 +166,9 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Post
 			// Show posts and a success indicator
 			return Promise.resolve([
 				new PostsSuccessTreeItem(this.filteredPosts.length),
-				...this.filteredPosts.map(post => new PostTreeItem(post, this.extensionPath))
+				...this.filteredPosts.map(
+					(post) => new PostTreeItem(post, this.extensionPath)
+				),
 			]);
 		}
 
@@ -126,22 +185,29 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Post
 		// Apply search query filter
 		if (this.currentFilters.query) {
 			const query = this.currentFilters.query.toLowerCase();
-			filtered = filtered.filter((post: Post) => 
-				post.title.toLowerCase().includes(query) ||
-				post.type.toLowerCase().includes(query) ||
-				(post.description && post.description.toLowerCase().includes(query)) ||
-				(post.tags && post.tags.some((tag: string) => tag.toLowerCase().includes(query)))
+			filtered = filtered.filter(
+				(post: Post) =>
+					post.title.toLowerCase().includes(query) ||
+					post.type.toLowerCase().includes(query) ||
+					(post.description &&
+						post.description.toLowerCase().includes(query)) ||
+					(post.tags &&
+						post.tags.some((tag: string) => tag.toLowerCase().includes(query)))
 			);
 		}
 
 		// Apply status filter
 		if (this.currentFilters.status) {
-			filtered = filtered.filter((post: Post) => post.status === this.currentFilters.status);
+			filtered = filtered.filter(
+				(post: Post) => post.status === this.currentFilters.status
+			);
 		}
 
 		// Apply type filter
 		if (this.currentFilters.type) {
-			filtered = filtered.filter((post: Post) => post.type === this.currentFilters.type);
+			filtered = filtered.filter(
+				(post: Post) => post.type === this.currentFilters.type
+			);
 		}
 
 		this.filteredPosts = filtered;
@@ -159,7 +225,7 @@ export class PostProvider implements vscode.TreeDataProvider<PostTreeItem | Post
 	/**
 	 * Set status filter
 	 */
-	setStatusFilter(status: 'draft' | 'published' | undefined): void {
+	setStatusFilter(status: "draft" | "published" | undefined): void {
 		this.currentFilters.status = status;
 		this.applyFilters();
 		this._onDidChangeTreeData.fire(undefined);

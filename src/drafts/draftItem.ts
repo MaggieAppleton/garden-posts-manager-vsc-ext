@@ -6,7 +6,7 @@ import { DraftStatus } from "../core/types";
 export class LoadingTreeItem extends vscode.TreeItem {
 	constructor() {
 		super("Loading drafts...", vscode.TreeItemCollapsibleState.None);
-		
+
 		this.iconPath = new vscode.ThemeIcon("loading~spin");
 		this.contextValue = "loading";
 		this.tooltip = "Scanning workspace for draft files...";
@@ -63,20 +63,23 @@ export class DraftPost {
 	 * Get compact metadata string with dots for tree view display
 	 */
 	getMetadataString(): string {
-		const timeAgo = formatDistanceToNow(this.lastModified, { addSuffix: false });
-		
+		const timeAgo = formatDistanceToNow(this.lastModified, {
+			addSuffix: false,
+		});
+
 		// Convert to more compact format for tree view
 		const compactTime = timeAgo
-			.replace(/about /g, '~')
-			.replace(/ days?/g, 'd')
-			.replace(/ weeks?/g, 'w')
-			.replace(/ months?/g, 'mo')
-			.replace(/ years?/g, 'y')
-			.replace(/less than a minute/g, 'just now')
-		
+			.replace(/about /g, "~")
+			.replace(/ days?/g, "d")
+			.replace(/ weeks?/g, "w")
+			.replace(/ months?/g, "mo")
+			.replace(/ years?/g, "y")
+			.replace(/less than a minute/g, "just now");
+
 		// Capitalize the first letter of the content type
-		const capitalizedType = this.type.charAt(0).toUpperCase() + this.type.slice(1);
-		
+		const capitalizedType =
+			this.type.charAt(0).toUpperCase() + this.type.slice(1);
+
 		return `${this.wordCount}w • ${compactTime} • ${capitalizedType}`;
 	}
 
@@ -85,13 +88,14 @@ export class DraftPost {
 	 */
 	getTooltipMetadataString(): string {
 		const timeAgo = formatDistanceToNow(this.lastModified, { addSuffix: true });
-		
+
 		// Format for tooltip: more verbose and natural
-		const verboseTime = timeAgo.replace(/ago$/, 'ago');
-		
+		const verboseTime = timeAgo.replace(/ago$/, "ago");
+
 		// Capitalize the first letter of the content type
-		const capitalizedType = this.type.charAt(0).toUpperCase() + this.type.slice(1);
-		
+		const capitalizedType =
+			this.type.charAt(0).toUpperCase() + this.type.slice(1);
+
 		return `${this.wordCount} words ⋅ Last edited ${verboseTime} ⋅ ${capitalizedType}`;
 	}
 
@@ -99,8 +103,12 @@ export class DraftPost {
 	 * Get status icon path for tree view display
 	 */
 	getStatusIconPath(extensionPath: string): string {
-		const iconName = this.status === "fresh" ? "fresh" : 
-						 this.status === "stale" ? "stale" : "default";
+		const iconName =
+			this.status === "fresh"
+				? "fresh"
+				: this.status === "stale"
+				? "stale"
+				: "default";
 		return path.join(extensionPath, "resources", "icons", `${iconName}.svg`);
 	}
 }
@@ -113,16 +121,17 @@ export class DraftTreeItem extends vscode.TreeItem {
 			.TreeItemCollapsibleState.None
 	) {
 		// Truncate title to 28 characters and add ellipsis if needed
-		const truncatedTitle = draft.title.length > 28
-			? draft.title.substring(0, 28) + "..."
-			: draft.title;
+		const truncatedTitle =
+			draft.title.length > 28
+				? draft.title.substring(0, 28) + "..."
+				: draft.title;
 
 		super(truncatedTitle, collapsibleState);
 
 		this.tooltip = `${draft.title}\n${draft.getTooltipMetadataString()}`;
 		this.description = draft.getMetadataString();
 		this.contextValue = "draft";
-		
+
 		// Set custom icon based on draft status
 		this.iconPath = vscode.Uri.file(draft.getStatusIconPath(extensionPath));
 

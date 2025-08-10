@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { Post } from "../core/types";
 
 export class FilterWebviewProvider implements vscode.WebviewViewProvider {
-	public static readonly viewType = 'postManager.filterView';
+	public static readonly viewType = "postManager.filterView";
 
 	private _view?: vscode.WebviewView;
 	private _posts: Post[] = [];
@@ -17,51 +17,49 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 	public resolveWebviewView(
 		webviewView: vscode.WebviewView,
 		context: vscode.WebviewViewResolveContext,
-		_token: vscode.CancellationToken,
+		_token: vscode.CancellationToken
 	) {
 		this._view = webviewView;
 
 		webviewView.webview.options = {
 			enableScripts: true,
-			localResourceRoots: [this._extensionUri]
+			localResourceRoots: [this._extensionUri],
 		};
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
 		// Handle messages from the webview
-		webviewView.webview.onDidReceiveMessage(
-			message => {
-				switch (message.type) {
-					case 'setSearch':
-						this._filters.query = message.value || undefined;
-						this._onFiltersChanged(this._filters);
-						this._updateWebview();
-						break;
-					case 'setStatus':
-						this._filters.status = message.value || undefined;
-						this._onFiltersChanged(this._filters);
-						this._updateWebview();
-						break;
-					case 'setType':
-						this._filters.type = message.value || undefined;
-						this._onFiltersChanged(this._filters);
-						this._updateWebview();
-						break;
-					case 'clearFilters':
-						this._filters = {};
-						this._onFiltersChanged(this._filters);
-						this._updateWebview();
-						break;
-					case 'openPost':
-						// Open the post file
-						const postPath = message.path;
-						vscode.workspace.openTextDocument(postPath).then(doc => {
-							vscode.window.showTextDocument(doc);
-						});
-						break;
-				}
+		webviewView.webview.onDidReceiveMessage((message) => {
+			switch (message.type) {
+				case "setSearch":
+					this._filters.query = message.value || undefined;
+					this._onFiltersChanged(this._filters);
+					this._updateWebview();
+					break;
+				case "setStatus":
+					this._filters.status = message.value || undefined;
+					this._onFiltersChanged(this._filters);
+					this._updateWebview();
+					break;
+				case "setType":
+					this._filters.type = message.value || undefined;
+					this._onFiltersChanged(this._filters);
+					this._updateWebview();
+					break;
+				case "clearFilters":
+					this._filters = {};
+					this._onFiltersChanged(this._filters);
+					this._updateWebview();
+					break;
+				case "openPost":
+					// Open the post file
+					const postPath = message.path;
+					vscode.workspace.openTextDocument(postPath).then((doc) => {
+						vscode.window.showTextDocument(doc);
+					});
+					break;
 			}
-		);
+		});
 	}
 
 	public updatePosts(posts: Post[], filteredPosts: Post[], filters: any) {
@@ -74,17 +72,19 @@ export class FilterWebviewProvider implements vscode.WebviewViewProvider {
 	private _updateWebview() {
 		if (this._view) {
 			this._view.webview.postMessage({
-				type: 'updateData',
+				type: "updateData",
 				posts: this._posts,
 				filteredPosts: this._filteredPosts,
 				filters: this._filters,
-				availableTypes: [...new Set(this._posts.map(p => p.type))].sort()
+				availableTypes: [...new Set(this._posts.map((p) => p.type))].sort(),
 			});
 		}
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview) {
-		const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'filter.css'));
+		const styleUri = webview.asWebviewUri(
+			vscode.Uri.joinPath(this._extensionUri, "media", "filter.css")
+		);
 
 		return `<!DOCTYPE html>
 			<html lang="en">
