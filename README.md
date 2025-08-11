@@ -54,18 +54,6 @@ Your content goes here...
 - **Statistics Panel**: Growth metrics and content analytics
 - **Search & Filter Interface**: Discover and organize your thoughts
 
-## Commands
-
-| Command                    | Description                        |
-| -------------------------- | ---------------------------------- |
-| `Garden: Refresh Drafts`   | Rescan workspace for draft changes |
-| `Garden: Refresh Posts`    | Update all post data               |
-| `Garden: Search Posts`     | Find content across your garden    |
-| `Garden: Filter by Status` | Show only drafts or published      |
-| `Garden: Filter by Type`   | Filter by content type             |
-| `Garden: Clear Filters`    | Reset all filters                  |
-| `Garden: Show Statistics`  | Display detailed analytics         |
-
 ## Requirements
 
 - VS Code 1.74.0 or higher
